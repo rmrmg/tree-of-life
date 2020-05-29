@@ -27,7 +27,7 @@ Note that due to a stochastic character of the algorithm, actual coordiantes may
 * `x` and `y` denote coordinates in the embedded space
 * for biotic compounds, `cluster_id` and `cluster_size` does not apply, thus are assigned with values `not apply`
 
-## Path statistics
+## Graph statistics
 
 `KinKout.csv`  contains ***in degree*** (how many reactions leads to particular molecule) and ***out degree*** (number of reactions in which molecules acts as substrate ) of nodes (molecules) in graph (tree of life).
 
