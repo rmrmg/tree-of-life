@@ -35,7 +35,7 @@ Note that due to a stochastic character of the algorithm, actual coordiantes may
 
 `heatOfFormation.csv` contains heat of formation (in kcal/mol) calculated using PM6-D3H4X semiempirical method
 
-##condition changes along pathway
+## condition changes along pathway
 
 `minimalCondtionsChanges.csv` contains information about minimal changes reaction condition, id est in which condition (from strongly acidic to strongly basic) reactions 
 should occur to minimalize number of condition change
