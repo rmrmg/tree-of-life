@@ -7,8 +7,8 @@ by Agnieszka Wołos, Rafał Roszak, Anna Żądło-Dobrowolska, Wiktor Beker, Bar
 Data deposited here consiststs of two parts:
 
 # tree-of-life
-Tree of life as calculated by the Allchemy software and describes in the paper are store in subdirectory *data/*
-An examples of scripts which deponstrate how to works with deposited data are collected in subdirectory *scripts/*
+Tree of life as calculated by the Allchemy software and described in the paper are stored in subdirectory *data/*
+An examples of scripts which demonstrate how to work with deposited data are collected in subdirectory *scripts/* some calculated statistics about tree-of-life graph are stored in subdirectory *precalculatedGraphStats/*
 
 # molecular properties
 Molecular properites of compounds obtained from full tree-of-life are deposited in subdirectory *molecule_data/*
