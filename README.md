@@ -1,4 +1,4 @@
-# Orygin of life
+# Origin of life
 Here we deposit the code associated with the article 
 *Synthetic connectivity, emergence, and self-regeneration in the network of prebiotic chemistry*
 by Agnieszka Wołos, Rafał Roszak, Anna Żądło-Dobrowolska, Wiktor Beker, Barbara Mikulak-Klucznik, Grzegorz Spólnik, Mirosław Dygas, Sara Szymkuć & Bartosz A. Grzybowski
