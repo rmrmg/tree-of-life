@@ -13,3 +13,7 @@ Unfortunatelly installation of graph-tool can be more problematic (it cannot be 
 
 ## calcHeatOfFormation.py
 calculate heat of formation with mopac. Mopac need to be installed in /opt/mopac (see http://openmopac.net/ for details how to get and install mopac)
+
+## calcCyclesSimilarityAndDiversity.py
+
+calculates similarity and diversity of cycles requires as a input text file with semicolon separated list of reaction in cycle (each cycle = one line)
