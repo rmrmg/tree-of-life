@@ -13,3 +13,20 @@ Unfortunatelly installation of graph-tool can be more problematic (it cannot be 
 
 ## calcHeatOfFormation.py
 calculate heat of formation with mopac. Mopac need to be installed in /opt/mopac (see http://openmopac.net/ for details how to get and install mopac)
+
+## PlotProperties.py
+Plots properties from CSV files deposited here. Assuming working directory is `scripts`, the following commands should reproduce figures from the paper.
+
+* Figure 2a
+```
+ python  PlotProperties.py --descriptors heat_of_formation mass  Fig2a.png
+```
+* Figure 2b
+```
+python PlotProperties.py --descriptors LogP hb_acceptors Fig2b.png
+```
+* Figure S59
+```
+python PlotProperties.py FigS59.png
+```
+
