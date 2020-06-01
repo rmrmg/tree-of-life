@@ -1,25 +1,25 @@
 ### technical information
-- all files are compresed with p7zip (https://www.7-zip.org/) 
+- all files are compressed with p7zip (https://www.7-zip.org/) 
 - files are provided in two formats: json and python's pickle file (inside is one big dict)
-- all pickle file was created under python2.7
-- after uncompression files are 100 times bigger (check available space on your disk)
-- loading pickle files into Python require a lot of RAM (e.g. 6 generations tree with all paths requires ~68GB of RAM!!!)
+- all pickle files were created under python2.7
+- after unzipping files are 100 times bigger (check available space on your disk)
+- loading pickle files into Python requires a lot of RAM (e.g. 6 generations tree with all paths requires ~68GB of RAM!!!)
 
 ### data format
-- data is store as big one python dict, which follwoing keys:
-    - dict['status'] here is always just 'ok' string which confirm that the calculation successfully ended
-    - dict['cycles'] list of cycles in graph (here cycles are truncated up to 5 reactions length)
+- data is stored as big one python dict, with following keys:
+    - dict['status'] here is always just 'ok' string which confirms that the calculation was successfully ended
+    - dict['cycles'] list of cycles in graph (here only cycles with length of 5 reactions or less are stored)
     - dict['results'] dict where keys are smiles of reactants/products, e.g. dict['results']['C=C(C=NCC#N)c1ccccc1']. Such entry is also python dict with following keys:
         - parents - reactants which gave this product
-        - otherParents - other reactans which can produce this compound
+        - otherParents - other reactans which gave this compound
         - history - list of all reactions from initial reactants to this compounds (synthetic path). Each step in history is dict with following entries: 
             - smiles - reaction smiles
             - description - reaction name
             - reference - literature reference to the reaction type
-            - additionalInfo - reaction's thermochemistry (dG, dS, dH calculated with Benson group contribution), and estimated (based on literature precedents) yield. Benson estimation is not very accurate for heterocycles so we switch to semi empirical calculation and dS, dG, dH may be 0 in the files.
-            - condAB - reaction condition acidic, neutral, base or any combination of this
+            - additionalInfo - reaction's thermochemistry (dG, dS, dH calculated with Benson group contribution), and estimated (based on literature precedents) yield. Benson estimation is not very accurate for heterocycles so we switch to semi empirical calculation and dS, dG, dH may be 0 in the files. For more accurate thermochemistry see file *molecule_data/heatOfFormation.csv*
+            - condAB - reaction conditions: acidic, neutral, base or any combination of this
             - conditions - textual description of reaction condition
-        - alterHistories - list of list of alternative synthetic path. Each step has the same format as in "history".
+        - alterHistories - list of list of alternative synthetic paths. Each step has the same format as in "history".
         - all other entries should be self explanatory
 - data in json format correspond to python's pickle file 
 
