@@ -1,4 +1,4 @@
-smiles;in degree; out degree
+smiles;Kin (i.e. how many reactions give this molecule);Kout (i.e. how many reactions use this molecule as substrate)
 N=C(N)NC(Cc1ccccc1)C(=O)NC(CO)C(N)=O;2;1
 N#CCNCC(N)=O;3;15
 N#CC(NCC(=O)NC(CC(N)=O)C(N)=O)C(=O)O;1;7
