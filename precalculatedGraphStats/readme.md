@@ -19,4 +19,6 @@ This file is compressed with p7zip, after decompression it has 270MB.
 
 `KinKout-after7th_generation.csv` - Kin and Kout for tree-of-life after 7th generation
 
+`cyclesSimilarityndDiversity.csv` - number of cycles of given length, number of all and unique compounds in cycles, similarity and diversity for small cycles (up to 11 reactions)
+
 You can do this (and much more) by your own using data from /data directory. See also /script directory for example how to work with the data.

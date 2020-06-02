@@ -56,3 +56,8 @@ python CompareDistributions.py --descriptors LogP rings --two_d
 ```
 python CompareDistributions.py --descriptors hb_donors hb_acceptors --two_d
 ```
+
+## calcCyclesSimilarityAndDiversity.py
+
+calculates similarity and diversity of cycles requires as a input text file with semicolon separated list of reaction in cycle (each cycle = one line)
+

@@ -28,7 +28,7 @@
 - tree_of_life_6generations_CNOS tree with compounds up to 6th synthetic generation with mass limit 300g/mol and 5 reactans: water, amonia, nitrogen, methane, HCN and H2S. This tree has cycles and all alternative paths. 
 This part is splited into 3 parts with suffix _part_a _part_b and _part_c you can join it using cat command in unix, i.e.:  tree_of_life_6generations_CNOS.pickle.7z_part_a tree_of_life_6generations_CNOS.pickle.7z_part_b tree_of_life_6generations_CNOS.pickle.7z_part_c > tree_of_life_6generations_CNOS.pickle.7z
 
-
+In subdirectory `tree_of_lile_with_removed_reaction_class` there are full trees (in json format commpresed with p7zip) and smiles list from each tree
 
 ### hints
 - if you are interesed in testing your hypothesis (e.g. what can be formed without some reactions etc, is it possible to make compound XXX without reaction YYY and/or reactant ZZZ and so on) the best way is to build graph from the data
