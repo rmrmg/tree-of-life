@@ -1,6 +1,12 @@
 # Information about files
 All files are in CSV format (with semicolon as a  field separator).
 
+Packages required to launch scripts:
+* Scipy (version >=1.4.1)
+* Rdkit (version >=2019.03.4)
+* Pandas (version >=1.0.2)
+* Matplotlib (version >=3.1.3)
+
 ## Statistics of generated compouds
 
 * `selected_properties.csv` - computed properties for both biotic and abiotic compounds
@@ -17,6 +23,7 @@ All files are in CSV format (with semicolon as a  field separator).
  -`is_centroid`: `1` for cluster centroids, `0` for other members of the cluster
  -`smiles`: SMILES of the molecule
 Clusters are sorted according to their size (from the largest to smallest), with cluster centroid listed first.
+The clusterisation result can be reproduced with `ClusterAbiotic.py` script (`selected_properties.csv` should be present in working directory). Note that execution of this scipt require about 21GB of memory.
 
 ## t-SNE Embeding of molecules in Fig S60
 Note that due to a stochastic character of the algorithm, actual coordiantes may change when computed the second time.

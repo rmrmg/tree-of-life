@@ -1,4 +1,4 @@
-;smiles;biotic_flag;ExactMolWt;MolLogP;NumHAcceptors;NumHDonors
+no;smiles;biotic_flag;ExactMolWt;MolLogP;NumHAcceptors;NumHDonors
 0;O=C(O)CC(O)(CC(=O)O)C(=O)O;1;192.02700259600002;-1.2484999999999995;4.0;4.0
 1;Nc1nc(=O)[nH]c2[nH]cnc12;1;151.04940978;-0.7716000000000001;4.0;3.0
 2;NC(CO)C(=O)NCC(=O)NCC(=O)NCC(=O)O;1;276.106984232;-4.260799999999996;6.0;6.0
