@@ -1,0 +1,11 @@
+ MaxAbsPartialCharge
+    MaxPartialCharge 
+    NumAromaticRings 
+    RingCount
+   NHOHCount
+                TPSA 
+                 qed 
+       NumHAcceptors 
+ MinAbsPartialCharge 
+             NOCount 
+             MolLogP 
