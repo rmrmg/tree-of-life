@@ -29,4 +29,30 @@ python PlotProperties.py --descriptors LogP hb_acceptors Fig2b.png
 ```
 python PlotProperties.py FigS59.png
 ```
+## CompareDistributions.py
+Used for statistical tests (see `python CompareDistributions.py -h`). The following commands should reproduce results in TableS2 (note that Bootstrap results may differ by last digit due to the stochastic character of the method).
 
+* Number of condition changes
+```
+python CompareDistributions.py --descriptors conditions
+```
+
+* LogP
+```
+python CompareDistributions.py --descriptors LogP 
+```
+
+* 2-D distributions
+   * LogP vs Nuber of Hydrogen Bond Donors
+```
+python CompareDistributions.py --descriptors LogP hb_donors --two_d
+```
+
+   * LogP vs Number of Rings
+```
+python CompareDistributions.py --descriptors LogP rings --two_d
+```
+   * Hydrogen Bond Donors vs Hydrogen Bond Acceptors
+```
+python CompareDistributions.py --descriptors hb_donors hb_acceptors --two_d
+```

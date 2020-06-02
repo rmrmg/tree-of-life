@@ -67,7 +67,7 @@ def bootstrap_internal(args):
 
 def bootstrap(X,Y,nb=1000,stat=lambda x:0.001, threads=1):
     combined = np.hstack([X,Y])
-    NX=len(X)
+    NX=len(X) 
     NY=len(Y)
     pval=0
     ref=stat(Y,X)
@@ -75,7 +75,7 @@ def bootstrap(X,Y,nb=1000,stat=lambda x:0.001, threads=1):
 
     if threads==1:
       internal = lambda x: bootstrap_internal((NX, NY, ref, stat, combined))
-      pval = sum([internal() for _ in range(nb)])
+      pval = sum([internal(_) for _ in range(nb)])
     else:
       p=Pool(threads)
       data_gen = ((NX, NY, ref, stat, combined) for _ in range(nb))
