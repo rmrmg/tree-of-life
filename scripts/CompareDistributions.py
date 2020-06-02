@@ -5,7 +5,9 @@ from random import randint
 from numpy.random import multivariate_normal
 from numpy import array,zeros,ones,where
 import numpy as np
-from rdkit.Chem import CanonSmiles
+from rdkit.Chem import CanonSmiles, MolFromSmiles
+from rdkit.Chem.Descriptors import RingCount
+from multiprocessing import Pool
 
 def canonize(sml):
    return CanonSmiles(CanonSmiles(sml))
@@ -51,20 +53,33 @@ def ks_test(X,Y):
         if d>S:S=d
     return S*sqrt(Nx*Ny/(Nx+Ny))
 
-def bootstrap(X,Y,nb=1000,stat=lambda x:0.001):
+
+def bootstrap_internal(args):
+    NX, NY, ref, stat, combined = args
+    newX=[combined[randint(0,NX+NY-1)] for x in range(NX)]
+    newY=[combined[randint(0,NX+NY-1)] for x in range(NY)]
+    V=stat(newX,newY)
+    if type(V).__name__=='tuple':V=V[0]
+    if V>=ref: 
+      return 1.0
+    return 0.0
+
+
+def bootstrap(X,Y,nb=1000,stat=lambda x:0.001, threads=1):
     combined = np.hstack([X,Y])
     NX=len(X)
     NY=len(Y)
     pval=0
     ref=stat(Y,X)
     if type(ref).__name__=='tuple':ref=ref[0]
-    
-    for i in range(nb):
-        newX=[combined[randint(0,NX+NY-1)] for x in range(NX)]
-        newY=[combined[randint(0,NX+NY-1)] for x in range(NY)]
-        V=stat(newX,newY)
-        if type(V).__name__=='tuple':V=V[0]
-        if V>=ref:pval+=1.0
+
+    if threads==1:
+      internal = lambda x: bootstrap_internal((NX, NY, ref, stat, combined))
+      pval = sum([internal() for _ in range(nb)])
+    else:
+      p=Pool(threads)
+      data_gen = ((NX, NY, ref, stat, combined) for _ in range(nb))
+      pval = sum(p.map(bootstrap_internal, data_gen))
     return pval/nb
     
 def mean(X):return sum(X)/float(len(X))
@@ -131,56 +146,90 @@ if __name__=='__main__':
          default='../molecule_data/minimalCondtionsChanges.csv', 
          help='path to minimalCondtionsChanges.csv')
    parser.add_argument('--nbootstrap',type=int,default=1000, help='Number of bootstrap samples')
+   parser.add_argument('--nthreads',type=int,default=1, help='Number of threads')
+   parser.add_argument('--two_d',action='store_true', help='Compare 2D distributions (2 descriptors must be provided)')
    parser.add_argument('--descriptors', type=str, nargs='+', 
          default=['LogP'],
-         choices=['hb_donors', 'hb_acceptors', 'LogP', 'mass', 'conditions'],
+         choices=['hb_donors', 'hb_acceptors', 'LogP', 'mass', 'conditions', 'rings'],
          help='Properties to compare')
    args=parser.parse_args()
    
-   keys= {'mass':'ExactMolWt','LogP':'MolLogP','hb_acceptors':'NumHAcceptors', 'hb_donors':'NumHDonors', 'heat_of_formation':'heat', 'conditions':'conditions'}
+   keys= {'mass':'ExactMolWt','LogP':'MolLogP','hb_acceptors':'NumHAcceptors',
+          'hb_donors':'NumHDonors', 'heat_of_formation':'heat', 
+           'conditions':'conditions', 'rings':'rings'}
    properties = pd.read_csv(args.properties, sep=';')
    #properties.smiles = properties.smiles.apply(canonize)
    properties.sort_values('smiles', inplace=True, ignore_index=True )
+
+   if 'rings' in args.descriptors:
+      properties = properties.assign(rings=properties.smiles.apply(lambda x: RingCount(MolFromSmiles(x))))
+
    if 'conditions' in args.descriptors:
       conditions = pd.read_csv(args.conditions, sep=';')
       #conditions.smiles = conditions.smiles.apply(canonize)
       conditions.sort_values('smiles',inplace=True, ignore_index=True )
       conditions = conditions[conditions.smiles.isin(properties.smiles)]
+
       properties = properties[properties.smiles.isin(conditions.smiles)]
       properties = properties.assign(conditions=conditions[conditions.smiles.isin(properties.smiles)]['minimal number of condition changes '])
 
    nb = args.nbootstrap
-   
+
+   biotic_series, abiotic_series = [], []
+   do_2d = (args.two_d and len(args.descriptors)==2)
    for desc in args.descriptors:
-      print('Property :%s'%desc)
-      bins = 10 if desc in ['mass','LogP'] else np.arange(properties[keys[desc]].max()+1)
-      _, bins = np.histogram(properties[keys[desc]], bins=bins)
       biotic_data = properties[properties.biotic_flag==1][keys[desc]]
-      biotic_data, _ = np.histogram(biotic_data, bins=bins)
-      
-      #now let's make a population of bin ids - each id should repeat the same number of time 
-      #as count within bin
-      #thus, during sampling, given bin will be represented proprotionally to its occupation
-      #it is effectively the same as assining each record with the corresponding bin ID
-      biotic_data = counts_to_bin_ids_representing_data(biotic_data)
+      biotic_series.append(biotic_data)
 
       abiotic_data = properties[properties.biotic_flag==0][keys[desc]]
-      abiotic_data, _ = np.histogram(abiotic_data, bins=bins)
-      abiotic_data = counts_to_bin_ids_representing_data(abiotic_data)
+      abiotic_series.append(abiotic_data)
+      
+      if not do_2d:
+         print('Property :%s'%desc)
+         bins = 10 if desc in ['mass','LogP'] else np.arange(properties[keys[desc]].max()+1)
+         _, bins = np.histogram(properties[keys[desc]], bins=bins)
+      
+         biotic_data, _ = np.histogram(biotic_data, bins=bins)
+         
+         #now let's make a population of bin ids - each id should repeat the same number of time 
+         #as count within bin
+         #thus, during sampling, given bin will be represented proprotionally to its occupation
+         #it is effectively the same as assining each record with the corresponding bin ID
+         biotic_data = counts_to_bin_ids_representing_data(biotic_data)
+   
+         abiotic_data, _ = np.histogram(abiotic_data, bins=bins)
+         abiotic_data = counts_to_bin_ids_representing_data(abiotic_data)
+   
+         #Chi2 p-values      
+         c,v=chi2_stat(biotic_data, abiotic_data)
+         cp=chi2(c,v)
+         print('   Chi2: ',cp)
+         
+         #KS p-values
+         k=ks_test(biotic_data, abiotic_data)
+         kp=kolmogorov(k)
+         print('   KS: ',kp)
+         print('\n   Bootstrap')
+          
+         print('   KS: ',bootstrap(biotic_data, abiotic_data, nb=nb, stat=ks_test, threads=args.nthreads))
+         print('   Chi2: ',bootstrap(biotic_data, abiotic_data, nb=nb, stat=chi2_stat, threads=args.nthreads))
+   if do_2d:
+      print('2D: %s-%s'%tuple(args.descriptors)) 
+      _, binx, biny = np.histogram2d(properties[keys[args.descriptors[0]]], properties[keys[args.descriptors[1]]])
+      bins=(binx, biny)
+      biotic_data, _, _ = np.histogram2d(*biotic_series, bins=bins)
+      biotic_data = counts_to_bin_ids_representing_data(biotic_data.reshape(-1).astype(int))
 
+      abiotic_data, _, _ = np.histogram2d(*abiotic_series, bins=bins)
+      abiotic_data = counts_to_bin_ids_representing_data(abiotic_data.reshape(-1).astype(int))
+   
       #Chi2 p-values      
       c,v=chi2_stat(biotic_data, abiotic_data)
       cp=chi2(c,v)
       print('   Chi2: ',cp)
-      
-      #KS p-values
-      k=ks_test(biotic_data, abiotic_data)
-      kp=kolmogorov(k)
-      print('   KS: ',kp)
+         
       print('\n   Bootstrap')
-       
-      LT = [biotic_data[randint(0,len(biotic_data)-1)] for x in range(len(biotic_data))]
-      NT = [abiotic_data[randint(0,len(abiotic_data)-1)] for x in range(len(abiotic_data))]
-       
-      print('   KS: ',bootstrap(biotic_data, abiotic_data, nb=nb, stat=ks_test))
-      print('   Chi2: ',bootstrap(biotic_data, abiotic_data, nb=nb, stat=chi2_stat))
+      print('   Chi2: ',bootstrap(biotic_data, abiotic_data, nb=nb, stat=chi2_stat, threads=args.nthreads))
+
+      
+      
